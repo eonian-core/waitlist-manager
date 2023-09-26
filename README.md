@@ -52,11 +52,18 @@ To run tests, run the following command
 
 ### Deployment
 
+To deploy, you need [install flyctl](https://fly.io/docs/hands-on/install-flyctl/) and login using `fly auth login`
+
 To deploy this project run
 
 ```bash
   yarn deploy
 ```
+
+#### Next steps
+
+- Run `fly status` - show the status of the application instances.
+- Run `fly apps open` - open your browser and direct it to your app.
 
 
 ## Made by Eonian
