@@ -12,13 +12,22 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
+# Install packages needed to build node modules
+RUN apt-get update -qq && \
+    apt-get install -y build-essential pkg-config python curl
+
+ENV SUPERCRONIC_URL=https://github.com/aptible/supercronic/releases/download/v0.1.12/supercronic-linux-amd64 \
+    SUPERCRONIC=supercronic-linux-amd64 \
+    SUPERCRONIC_SHA1SUM=048b95b48b708983effb2e5c935a1ef8483d9e3e
+
+RUN curl -fsSLO "$SUPERCRONIC_URL" \
+    && echo "${SUPERCRONIC_SHA1SUM}  ${SUPERCRONIC}" | sha1sum -c - \
+    && chmod +x "$SUPERCRONIC" \
+    && mv "$SUPERCRONIC" "/usr/local/bin/${SUPERCRONIC}" \
+    && ln -s "/usr/local/bin/${SUPERCRONIC}" /usr/local/bin/supercronic
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
-
-# Install packages needed to build node modules
-RUN apt-get update -qq && \
-    apt-get install -y build-essential pkg-config python
 
 # Install node modules
 COPY --link package.json yarn.lock ./
@@ -40,6 +49,8 @@ FROM base
 # Copy built application
 COPY --from=build /app /app
 
-# Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD [ "yarn", "run", "start" ]
+# Copy cron job
+COPY crontab crontab
+COPY run.sh run.sh
+
+CMD supercronic ./crontab

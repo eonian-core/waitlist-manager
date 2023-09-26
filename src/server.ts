@@ -21,6 +21,8 @@ app.get('/', async(_request, response) => {
 
   fs.writeFileSync('counter.txt', count.toString())
 
+  console.log(`Received request. Count is ${count}`)
+
   // render HTML response
   try {
     const content = fs.readFileSync('views/index.tmpl', 'utf-8')
