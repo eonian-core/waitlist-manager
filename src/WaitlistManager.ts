@@ -57,21 +57,20 @@ export class WaitlistManager {
         return;
     }
 
-    let accessList = []
-
-    for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i];
+    const accessList = entries.map((entry, i) => {
         const points = entry.referedCount * MOVE_IN_LINE_PER_REFERED_FRIEND + entry.sharedSocialsCount * MOVE_IN_LINE_PER_SHARED_SOCIAL;
 
-        accessList.push(new AccessPosition(entry, i, points));
-    }
-
+        return new AccessPosition(entry, i, points)
+    })
     // Sort by position
-    accessList = accessList.sort((a, b) => a.resultPosition - b.resultPosition);
+    .sort((a, b) => a.resultPosition - b.resultPosition)
+    .slice(0, ACCESS_WAVE_COUNT)
+    
     console.log('Built access list', accessList.map(a => `${a.entry.email} ${a.resultPosition}`));
 
-    await Promise.all(accessList.slice(0, ACCESS_WAVE_COUNT).map(async ({entry}) => {
+    await Promise.all(accessList.map(async ({entry}) => {
         await this.accesses.add(entry.email);
+
         // TODO: move this calls inside of accesses service
         await this.emails.sendAccessGivenEmail(entry.email);
         await this.waitlist.markAsGivenAccess(entry);
