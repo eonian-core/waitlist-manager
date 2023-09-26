@@ -19,14 +19,20 @@ Install dependencies
     
 ## Development
 
-Commands 
+Build and start server
+
+```bash
+  yarn dev
+```
+
+### Commands 
 
 - `build` - Build project
 - `start` - Start server
 
 
 
-## Environment Variables
+### Environment Variables
 
 To run this project, you will need to add the following environment variables to your .env file
 
@@ -35,7 +41,7 @@ To run this project, you will need to add the following environment variables to
 `ANOTHER_API_KEY`
 
 
-## Running Tests
+### Running Tests
 
 To run tests, run the following command
 
@@ -44,7 +50,7 @@ To run tests, run the following command
 ```
 
 
-## Deployment
+### Deployment
 
 To deploy this project run
 
