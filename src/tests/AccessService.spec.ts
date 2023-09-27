@@ -1,4 +1,5 @@
-import { AccessService, WaitlistDatabase, ApplicationAccessDatabase, EmailService } from '../AccessService';
+import { AccessService, ApplicationAccessDatabase, EmailService } from '../AccessService';
+import { WaitlistDatabase } from '../WaitlistAdapter';
 import { WaitlistEntry } from '../WaitlistEntry';
 
 describe('AccessService', () => {
@@ -10,7 +11,7 @@ describe('AccessService', () => {
   beforeEach(() => {
     waitlistMock = {
       markAsGivenAccess: jest.fn(),
-    };
+    } as any;
 
     accessesMock = {
       add: jest.fn(),

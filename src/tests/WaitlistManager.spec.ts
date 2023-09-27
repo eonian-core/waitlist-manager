@@ -1,5 +1,6 @@
 import { AccessService } from '../AccessService';
-import { WaitlistManager, WaitlistDatabase } from '../WaitlistManager';
+import { WaitlistDatabase } from '../WaitlistAdapter';
+import { WaitlistManager } from '../WaitlistManager';
 
 describe('WaitlistManager', () => {
   let waitlistManager: WaitlistManager;
@@ -10,7 +11,7 @@ describe('WaitlistManager', () => {
   beforeEach(() => {
     waitlistDatabase = {
       getLatest: jest.fn().mockResolvedValue([]),
-    };
+    } as any;
 
     accesses = {
       giveAccess: jest.fn().mockResolvedValue(undefined),

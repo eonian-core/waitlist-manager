@@ -1,10 +1,7 @@
 import { AccessService } from "./AccessService";
+import { WaitlistDatabase } from "./WaitlistAdapter";
 import { WaitlistEntry } from "./WaitlistEntry";
 
-
-export interface WaitlistDatabase {
-    getLatest(count: number): Promise<WaitlistEntry[]>
-}
 
 export class AccessPosition {
     constructor(
@@ -38,7 +35,7 @@ export class WaitlistManager {
   public async giveAccessToTop(): Promise<void> {
 
     // Expect that up to 10 times more entries have enough points to get access
-    const entries = await this.waitlist.getLatest(ACCESS_WAVE_COUNT * 10);
+    const entries = await this.waitlist.getLatest();
     if(!entries.length) {
         console.log('Not have entries to give access')
         return;

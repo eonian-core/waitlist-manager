@@ -1,8 +1,5 @@
+import { WaitlistDatabase } from "./WaitlistAdapter";
 import { WaitlistEntry } from "./WaitlistEntry"
-
-export interface WaitlistDatabase {
-    markAsGivenAccess(entry: WaitlistEntry): Promise<void>
-}
 
 export interface ApplicationAccessDatabase {
     add(email: string): Promise<void>

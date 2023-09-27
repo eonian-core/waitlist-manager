@@ -34,11 +34,14 @@ Build and start server
 
 ### Environment Variables
 
-To run this project, you will need to add the following environment variables to your .env file
+To run e2e tests you need to set environment variables
 
-`API_KEY`
+```bash
+# Setup .env file
+cp .env.example .env
+```
 
-`ANOTHER_API_KEY`
+Then fill `.env` file with your values
 
 
 ### Running Tests
@@ -46,7 +49,10 @@ To run this project, you will need to add the following environment variables to
 To run tests, run the following command
 
 ```bash
+  # Unit tests on mocks
   yarn test
+  # E2E tests with real requests
+  yarn test:e2e
 ```
 
 
