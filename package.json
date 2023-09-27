@@ -2,7 +2,7 @@
   "name": "@eonian/waitlist-manager",
   "private": true,
   "scripts": {
-    "dev": "concurrently -c \"auto\" \"yarn:build:watch\" \"yarn:start:watch\"",
+    "dev": "jest --watch",
     "build": "tsc",
     "build:watch": "tsc -w",
     "start": "node build/server.js",

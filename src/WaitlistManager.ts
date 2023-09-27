@@ -1,21 +1,9 @@
+import { AccessService } from "./AccessService";
+import { WaitlistEntry } from "./WaitlistEntry";
 
-export interface WaitlistEntry {
-    email: string;
-    referedCount: number;
-    sharedSocialsCount: number;
-}
 
 export interface WaitlistDatabase {
     getLatest(count: number): Promise<WaitlistEntry[]>
-    markAsGivenAccess(entry: WaitlistEntry): Promise<void>
-}
-
-export interface ApplicationAccessDatabase {
-    add(email: string): Promise<void>
-}
-
-export interface EmailService {
-    sendAccessGivenEmail(email: string): Promise<void>
 }
 
 export class AccessPosition {
@@ -39,8 +27,7 @@ export const ACCESS_WAVE_COUNT = +(process.env.ACCESS_WAVE_COUNT || 5);
 export class WaitlistManager {
   constructor(
     private waitlist: WaitlistDatabase,
-    private accesses: ApplicationAccessDatabase,
-    private emails: EmailService
+    private accesses: AccessService
   ) {}
   
   /** 
@@ -48,7 +35,7 @@ export class WaitlistManager {
    * takes into acount amount of reffered friends 
    * and shares on social media 
    * */
-  public async giveAccess(): Promise<void> {
+  public async giveAccessToTop(): Promise<void> {
 
     // Expect that up to 10 times more entries have enough points to get access
     const entries = await this.waitlist.getLatest(ACCESS_WAVE_COUNT * 10);
@@ -69,11 +56,7 @@ export class WaitlistManager {
     console.log('Built access list', accessList.map(a => `${a.entry.email} ${a.resultPosition}`));
 
     await Promise.all(accessList.map(async ({entry}) => {
-        await this.accesses.add(entry.email);
-
-        // TODO: move this calls inside of accesses service
-        await this.emails.sendAccessGivenEmail(entry.email);
-        await this.waitlist.markAsGivenAccess(entry);
+        return await this.accesses.giveAccess(entry);
     }))
   }
 }

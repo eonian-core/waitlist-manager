@@ -1,29 +1,24 @@
-import { WaitlistManager, WaitlistEntry, WaitlistDatabase, ApplicationAccessDatabase, EmailService } from '../WaitlistManager';
+import { AccessService } from '../AccessService';
+import { WaitlistManager, WaitlistDatabase } from '../WaitlistManager';
 
 describe('WaitlistManager', () => {
   let waitlistManager: WaitlistManager;
+
   let waitlistDatabase: WaitlistDatabase;
-  let applicationAccessDatabase: ApplicationAccessDatabase;
-  let emailService: EmailService;
+  let accesses: AccessService;
 
   beforeEach(() => {
     waitlistDatabase = {
       getLatest: jest.fn().mockResolvedValue([]),
-      markAsGivenAccess: jest.fn().mockResolvedValue(undefined),
     };
 
-    applicationAccessDatabase = {
-      add: jest.fn().mockResolvedValue(undefined),
-    };
-
-    emailService = {
-      sendAccessGivenEmail: jest.fn().mockResolvedValue(undefined),
-    };
+    accesses = {
+      giveAccess: jest.fn().mockResolvedValue(undefined),
+    } as any as AccessService;
 
     waitlistManager = new WaitlistManager(
       waitlistDatabase,
-      applicationAccessDatabase,
-      emailService
+      accesses
     );
   });
 
@@ -41,14 +36,14 @@ describe('WaitlistManager', () => {
       { email: 'j@g.com', referedCount: 0, sharedSocialsCount: 0 },
     ]);
 
-    await waitlistManager.giveAccess();
+    await waitlistManager.giveAccessToTop();
 
-    expect(applicationAccessDatabase.add).toHaveBeenCalledTimes(5);
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('d@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('i@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('c@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('b@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('h@g.com');
+    expect(accesses.giveAccess).toHaveBeenCalledTimes(5);
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'd@g.com', referedCount: 5, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'i@g.com', referedCount: 4, sharedSocialsCount: 1 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'c@g.com', referedCount: 3, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'b@g.com', referedCount: 2, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'h@g.com', referedCount: 0, sharedSocialsCount: 3 });
   });
 
   it('should give access to entries with shared socials', async () => {
@@ -65,14 +60,14 @@ describe('WaitlistManager', () => {
       { email: 'j@g.com', referedCount: 0, sharedSocialsCount: 0 },
     ]);
 
-    await waitlistManager.giveAccess();
+    await waitlistManager.giveAccessToTop();
 
-    expect(applicationAccessDatabase.add).toHaveBeenCalledTimes(5);
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('b@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('c@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('d@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('a@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('e@g.com');
+    expect(accesses.giveAccess).toHaveBeenCalledTimes(5);
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'b@g.com', referedCount: 0, sharedSocialsCount: 5 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'c@g.com', referedCount: 0, sharedSocialsCount: 3 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'd@g.com', referedCount: 0, sharedSocialsCount: 2 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'a@g.com', referedCount: 0, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'e@g.com', referedCount: 0, sharedSocialsCount: 1 });
   });
 
   it('should give access to entries with referred friends', async () => {
@@ -91,14 +86,14 @@ describe('WaitlistManager', () => {
       { email: 'j@g.com', referedCount: 0, sharedSocialsCount: 0 },
     ]);
 
-    await waitlistManager.giveAccess();
+    await waitlistManager.giveAccessToTop();
 
-    expect(applicationAccessDatabase.add).toHaveBeenCalledTimes(5);
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('e@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('d@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('c@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('b@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('a@g.com');
+    expect(accesses.giveAccess).toHaveBeenCalledTimes(5);
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'e@g.com', referedCount: 5, sharedSocialsCount: 0 },);
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'd@g.com', referedCount: 4, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'c@g.com', referedCount: 3, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'b@g.com', referedCount: 2, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'a@g.com', referedCount: 0, sharedSocialsCount: 0 });
   });
 
   it('should give access to entries with negative points', async () => {
@@ -115,14 +110,14 @@ describe('WaitlistManager', () => {
       { email: 'j@g.com', referedCount: 0, sharedSocialsCount: 0 },
     ]);
 
-    await waitlistManager.giveAccess();
+    await waitlistManager.giveAccessToTop();
 
-    expect(applicationAccessDatabase.add).toHaveBeenCalledTimes(5);
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('a@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('b@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('c@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('d@g.com');
-    expect(applicationAccessDatabase.add).toHaveBeenCalledWith('e@g.com');
+    expect(accesses.giveAccess).toHaveBeenCalledTimes(5);
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'a@g.com', referedCount: 0, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'b@g.com', referedCount: 0, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'c@g.com', referedCount: 0, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'd@g.com', referedCount: 0, sharedSocialsCount: 0 });
+    expect(accesses.giveAccess).toHaveBeenCalledWith({ email: 'e@g.com', referedCount: 0, sharedSocialsCount: 0 });
   });
 
 });
