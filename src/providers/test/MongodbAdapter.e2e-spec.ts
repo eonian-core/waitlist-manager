@@ -1,15 +1,23 @@
-import { AirtableClientAdapter } from "../AirtableClient"
+import { MongodbAdapter } from "../MongodbAdapter";
 
-describe('AirtableClientAdapter', () => {
-    let client: AirtableClientAdapter
+describe("MongodbAdapter", () => {
 
-    beforeEach(() => {
-        client = new AirtableClientAdapter()
+    let adapter: MongodbAdapter;
+
+    beforeAll(async () => {
+        adapter = new MongodbAdapter();
+        await adapter.connect();
     })
 
-    it('should add a record to the table', async () => {
+    afterAll(async () => {
+        await adapter.disconnect();
+    })
+
+    it("should be able to add a new entry", async () => {
+        // Arrange
+        const id = `test${Math.floor(Math.random() * 1000000)}`;
         const entry = {
-            id: 1084660,
+            id,
             address: 'test@gmail.com',
             ip: '111.125.40.97',
             points: 8,
@@ -38,10 +46,10 @@ describe('AirtableClientAdapter', () => {
             unsubscribe_link: 'https://tuemilio.com/email/1084660/unsubscribe?signature=dcda2153bbe66d30de101dc91a604662706f3ce845ae1c5f26c57dc583aaa68e'
         }
 
-        const result = await client.add(entry as any)
+        // Act
+        const result = await adapter.add(entry as any);
 
-        console.log('record created', result)
-
-        expect(result).not.toBeUndefined()
+        console.log('Saved record', result);
+        expect(result).toHaveProperty("id", id);
     })
 })

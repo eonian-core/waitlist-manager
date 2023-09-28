@@ -1,4 +1,4 @@
-import { WaitlistAdapter, TuemilioEmail, TuemilioListClient, AirtableClient } from "../WaitlistAdapter";
+import { WaitlistAdapter, TuemilioEmail, TuemilioListClient, PersistentDatabase } from "../WaitlistAdapter";
 import { WaitlistEntry } from "../WaitlistEntry";
 
 
@@ -8,7 +8,7 @@ describe("WaitlistAdapter", () => {
     let tuemilioMock: TuemilioListClient;
 
     // Mock implementation for AirtableClient
-    let airtableMock: AirtableClient;
+    let database: PersistentDatabase;
     let waitlistAdapter: WaitlistAdapter;
 
     beforeEach(() => {
@@ -17,10 +17,10 @@ describe("WaitlistAdapter", () => {
             update: jest.fn(),
             delete: jest.fn(),
         }
-        airtableMock = {
+        database = {
             add: jest.fn(),
         }
-        waitlistAdapter = new WaitlistAdapter(tuemilioMock, airtableMock);
+        waitlistAdapter = new WaitlistAdapter(tuemilioMock, database);
     });
 
     describe("markAsGivenAccess", () => {
@@ -29,7 +29,7 @@ describe("WaitlistAdapter", () => {
 
             await waitlistAdapter.markAsGivenAccess(entry);
 
-            expect(airtableMock.add).toHaveBeenCalledWith(entry);
+            expect(database.add).toHaveBeenCalledWith(entry);
             expect(tuemilioMock.delete).toHaveBeenCalledWith(entry.id);
         });
     });
@@ -38,7 +38,7 @@ describe("WaitlistAdapter", () => {
         it("should return the latest waitlist entries with additional properties", async () => {
             const records: TuemilioEmail[] = [
                 {
-                    id: "2",
+                    id: 2,
                     address: "jane@example.com",
                     created_at: "2023-07-28T10:30:15.000000Z",
                     points: 16,
@@ -47,7 +47,7 @@ describe("WaitlistAdapter", () => {
                     shared_on: { twitter: true, facebook: true },
                 },
                 {
-                    id: "1",
+                    id: 1,
                     address: "john@example.com",
                     created_at: "2023-07-27T12:45:29.000000Z",
                     points: 8,
@@ -56,7 +56,7 @@ describe("WaitlistAdapter", () => {
                     shared_on: { telegram: true },
                 },
                 {
-                    id: "3",
+                    id: 3,
                     address: "jane2@example.com",
                     created_at: "2023-07-26T10:30:15.000000Z",
                     points: 20,
@@ -97,7 +97,7 @@ describe("WaitlistAdapter", () => {
         it("should handle empty shared_on object", async () => {
             const records: TuemilioEmail[] = [
                 {
-                    id: "1",
+                    id: 1,
                     address: "john@example.com",
                     created_at: "2023-07-27T12:45:29.000000Z",
                     points: 10,

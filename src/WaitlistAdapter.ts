@@ -6,7 +6,7 @@ export interface WaitlistDatabase {
 }
 
 export interface TuemilioEmail {
-    id: string;
+    id: number;
     /** Email address */
     address: string;
     /** Date in string format, aka 2023-07-27T12:45:29.000000Z */
@@ -42,21 +42,21 @@ export interface TuemilioListClient {
     delete(emailId: string): Promise<void>
 }
 
-export interface AirtableClient {
+export interface PersistentDatabase {
     add(entry: WaitlistEntry): Promise<any>
 }
 
 export class WaitlistAdapter implements WaitlistDatabase {
     constructor(
         private tuemelio: TuemilioListClient,
-        private airtable: AirtableClient
+        private db: PersistentDatabase
     ) { }
 
     public async markAsGivenAccess(entry: WaitlistEntry): Promise<void> {
         // There currently no way to mark an email as given access in Tuemilio through the API
         // So we will save the record in Airtable and delete it from Tuemilio
 
-        await this.airtable.add(entry);
+        await this.db.add(entry);
         await this.tuemelio.delete(entry.id);
     }
 
@@ -77,6 +77,7 @@ export class WaitlistAdapter implements WaitlistDatabase {
 
                 return {
                     ...record,
+                    id: `${record.id}`,
                     email: record.address,
                     referedCount: pointsFromReferals / POINTS_PER_REFERED_FRIEND,
                     sharedSocialsCount,
