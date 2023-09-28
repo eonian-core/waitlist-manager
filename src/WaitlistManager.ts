@@ -16,15 +16,14 @@ export class AccessPosition {
     }
 }
 
-export const MOVE_IN_LINE_PER_REFERED_FRIEND = +(process.env.MOVE_IN_LINE_PER_REFERED_FRIEND || 5);
-export const MOVE_IN_LINE_PER_SHARED_SOCIAL = +(process.env.MOVE_IN_LINE_PER_SHARED_SOCIAL || 3);
-/** Amount of entries to give access per one call */
-export const ACCESS_WAVE_COUNT = +(process.env.ACCESS_WAVE_COUNT || 5);
-
 export class WaitlistManager {
   constructor(
     private waitlist: WaitlistDatabase,
-    private accesses: AccessService
+    private accesses: AccessService,
+    private moveInLinePerReferedFriend: number,
+    private moveInLinePerSharedSocial: number,
+    /** Amount of entries to give access per one call */
+    private accessWaveCount: number
   ) {}
   
   /** 
@@ -42,18 +41,20 @@ export class WaitlistManager {
     }
 
     const accessList = entries.map((entry, i) => {
-        const points = entry.referedCount * MOVE_IN_LINE_PER_REFERED_FRIEND + entry.sharedSocialsCount * MOVE_IN_LINE_PER_SHARED_SOCIAL;
+        const points = entry.referedCount * this.moveInLinePerReferedFriend + entry.sharedSocialsCount * this.moveInLinePerSharedSocial;
 
         return new AccessPosition(entry, i, points)
     })
     // Sort by position
     .sort((a, b) => a.resultPosition - b.resultPosition)
-    .slice(0, ACCESS_WAVE_COUNT)
+    .slice(0, this.accessWaveCount)
     
     console.log('Built access list', accessList.map(a => `${a.entry.email} ${a.resultPosition}`));
 
     await Promise.all(accessList.map(async ({entry}) => {
-        return await this.accesses.giveAccess(entry);
+      return await this.accesses.giveAccess(entry);
     }))
+
+    console.log("Accesses given to all entries!")
   }
 }

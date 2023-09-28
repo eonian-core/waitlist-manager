@@ -21,11 +21,6 @@ export interface TuemilioEmail {
     }
 }
 
-/** Used to calculate referals amount */
-export const POINTS_PER_REFERED_FRIEND = +(process.env.POINTS_PER_REFERED_FRIEND || 5);
-/** Used to calculate shares amount */
-export const POINTS_PER_SHARED_SOCIAL = +(process.env.POINTS_PER_SHARED_SOCIAL || 3);
-
 /** Need pass in constructor list id and api token, required for each call */
 export interface TuemilioListClient {
     /** 
@@ -49,7 +44,11 @@ export interface PersistentDatabase {
 export class WaitlistAdapter implements WaitlistDatabase {
     constructor(
         private tuemelio: TuemilioListClient,
-        private db: PersistentDatabase
+        private db: PersistentDatabase,
+        /** Used to calculate referals amount */
+        private pointsPerReferedFriend: number,
+        /** Used to calculate shares amount */
+        private pointsPerSharedSocial: number
     ) { }
 
     public async markAsGivenAccess(entry: WaitlistEntry): Promise<void> {
@@ -72,14 +71,14 @@ export class WaitlistAdapter implements WaitlistDatabase {
                 // * each share gives 3 points 
                 // * we have only this point sources
                 const sharedSocialsCount = Object.values(record.shared_on).filter(Boolean).length;
-                const pointsFromShares = sharedSocialsCount * POINTS_PER_SHARED_SOCIAL;
+                const pointsFromShares = sharedSocialsCount * this.pointsPerSharedSocial;
                 const pointsFromReferals = record.points - pointsFromShares;
 
                 return {
                     ...record,
                     id: `${record.id}`,
                     email: record.address,
-                    referedCount: pointsFromReferals / POINTS_PER_REFERED_FRIEND,
+                    referedCount: pointsFromReferals / this.pointsPerReferedFriend,
                     sharedSocialsCount,
                 }
             });

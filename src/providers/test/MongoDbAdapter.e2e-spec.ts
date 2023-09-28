@@ -1,11 +1,14 @@
-import { MongodbAdapter } from "../MongodbAdapter";
+import { getConfig } from "../../config";
+import { MongoDbAdapter } from "../MongoDbAdapter";
 
-describe("MongodbAdapter", () => {
+describe("MongoDbAdapter", () => {
 
-    let adapter: MongodbAdapter;
+    let adapter: MongoDbAdapter;
 
     beforeAll(async () => {
-        adapter = new MongodbAdapter();
+        const {MONGODB_URI} = getConfig();
+        
+        adapter = new MongoDbAdapter(MONGODB_URI);
         await adapter.connect();
     })
 

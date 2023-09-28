@@ -19,7 +19,10 @@ describe('WaitlistManager', () => {
 
     waitlistManager = new WaitlistManager(
       waitlistDatabase,
-      accesses
+      accesses,
+      5,
+      3,
+      5
     );
   });
 

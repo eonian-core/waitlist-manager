@@ -12,17 +12,16 @@ const WaitlistEntrySchema = new Schema<WaitlistEntryModel>({
     givenAccessAt: { type: Date, default: Date.now }
 }, {strict: false});
 
-export const MONGODB_URI = process.env.MONGODB_URI;
-
 const WaitlistEntryModel: Model<WaitlistEntryModel> = model("WaitlistEntry", WaitlistEntrySchema);
 
-export class MongodbAdapter implements PersistentDatabase {
+export class MongoDbAdapter implements PersistentDatabase {
+
+    constructor(
+        private uri: string
+    ) {}
 
     async connect(): Promise<void> {
-        if(!MONGODB_URI) {
-            throw new Error("MONGODB_URI environment variable is not defined")
-        }
-        await connect(MONGODB_URI)
+        await connect(this.uri)
     }
 
     async disconnect(): Promise<void> {

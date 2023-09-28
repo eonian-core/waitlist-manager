@@ -20,7 +20,7 @@ describe("WaitlistAdapter", () => {
         database = {
             add: jest.fn(),
         }
-        waitlistAdapter = new WaitlistAdapter(tuemilioMock, database);
+        waitlistAdapter = new WaitlistAdapter(tuemilioMock, database, 5, 3);
     });
 
     describe("markAsGivenAccess", () => {

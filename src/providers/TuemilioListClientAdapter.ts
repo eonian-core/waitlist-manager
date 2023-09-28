@@ -1,8 +1,7 @@
 import fetch from 'node-fetch';
 import { TuemilioEmail, TuemilioListClient } from "../WaitlistAdapter";
 
-export const TUEMILIO_LIST_ID = process.env.TUEMILIO_LIST_ID;
-export const TUEMILIO_API_TOKEN = process.env.TUEMILIO_API_TOKEN;
+
 
 export class TuemilioListClientAdapter implements TuemilioListClient {
     private apiUrl: string;
