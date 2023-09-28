@@ -43,7 +43,7 @@ export interface TuemilioListClient {
 }
 
 export interface AirtableClient {
-    add(entry: WaitlistEntry): Promise<void>
+    add(entry: WaitlistEntry): Promise<any>
 }
 
 export class WaitlistAdapter implements WaitlistDatabase {
