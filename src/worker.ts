@@ -4,12 +4,18 @@ import { WaitlistManager } from "./WaitlistManager"
 import { getConfig } from "./config";
 import { TuemilioListClientAdapter } from "./providers/TuemilioListClientAdapter";
 import { MongoDbAdapter } from "./providers/MongoDbAdapter";
+import { Auth0Adapter } from "./providers/Auth0Adapter";
 
 export const buildDependencies = () => {
     const {
         TUEMILIO_LIST_ID, 
         TUEMILIO_API_TOKEN, 
+        
         MONGODB_URI, 
+
+        AUTH0_DOMAIN,
+        AUTH0_TOKEN,
+
         MOVE_IN_LINE_PER_REFERED_FRIEND, 
         MOVE_IN_LINE_PER_SHARED_SOCIAL, 
         ACCESS_WAVE_COUNT
@@ -18,8 +24,13 @@ export const buildDependencies = () => {
     const tuemilio = new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
     const mongodb = new MongoDbAdapter(MONGODB_URI)
 
+    const auth0 = new Auth0Adapter({
+        domain: AUTH0_DOMAIN,
+        token: AUTH0_TOKEN,
+    })
+
     const waitlist = new WaitlistAdapter(tuemilio, mongodb, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL)
-    const accessService = new AccessService(waitlist)
+    const accessService = new AccessService(waitlist, auth0, {} as any)
     const manager = new WaitlistManager(waitlist, accessService, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL, ACCESS_WAVE_COUNT)
 
     return {
