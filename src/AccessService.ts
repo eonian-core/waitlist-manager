@@ -21,6 +21,8 @@ export class AccessService {
 
         await this.emails.sendAccessGivenEmail(entry.email);
 
+        // Mark as given access cannot be reverted
+        // so important to make it only after all other actions is done
         await this.waitlist.markAsGivenAccess(entry);
     }
 }

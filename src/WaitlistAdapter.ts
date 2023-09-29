@@ -53,9 +53,9 @@ export class WaitlistAdapter implements WaitlistDatabase {
 
     public async markAsGivenAccess(entry: WaitlistEntry): Promise<void> {
         // There currently no way to mark an email as given access in Tuemilio through the API
-        // So we will save the record in Airtable and delete it from Tuemilio
-
+        // So we will save the record in database and delete it from Tuemilio
         await this.db.add(entry);
+        // important to delete it only after saving in database
         await this.tuemelio.delete(entry.id);
     }
 

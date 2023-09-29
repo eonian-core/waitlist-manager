@@ -29,7 +29,8 @@
     "auth0": "^4.0.1",
     "express": "^4.18.2",
     "mongoose": "^7.5.3",
-    "node-fetch": "2"
+    "node-fetch": "2",
+    "resend": "^1.1.0"
   },
   "dockerfile": {
     "cache": ""
