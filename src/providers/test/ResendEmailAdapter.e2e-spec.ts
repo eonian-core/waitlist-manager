@@ -8,10 +8,11 @@ describe('ResendEmailAdapter', () => {
     
     beforeEach(() => {
         const {
-            RESEND_API_KEY
+            RESEND_API_KEY,
+            ACCESS_EMAIL_DOMAIN
         } = getConfig();
 
-        adapter = new ResendEmailAdapter(RESEND_API_KEY);
+        adapter = new ResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN);
     })
 
     it('should send email', async () => {

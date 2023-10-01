@@ -10,6 +10,7 @@ export const getConfig = () => {
         AUTH0_TOKEN: process.env.AUTH0_TOKEN!,
 
         RESEND_API_KEY: process.env.RESEND_API_KEY!,
+        ACCESS_EMAIL_DOMAIN: process.env.ACCESS_EMAIL_DOMAIN!,
 
         MOVE_IN_LINE_PER_REFERED_FRIEND: +(process.env.MOVE_IN_LINE_PER_REFERED_FRIEND || 5),
         MOVE_IN_LINE_PER_SHARED_SOCIAL: +(process.env.MOVE_IN_LINE_PER_SHARED_SOCIAL || 3),

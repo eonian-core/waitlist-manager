@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "dev": "jest --watch",
-    "build": "tsc",
+    "build": "tsc && cp -r src/emails build/emails",
     "build:watch": "tsc -w",
     "start": "node build/server.js",
     "start:watch": "nodemon build/server.js",

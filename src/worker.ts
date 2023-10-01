@@ -18,6 +18,7 @@ export const buildDependencies = () => {
         AUTH0_TOKEN,
 
         RESEND_API_KEY,
+        ACCESS_EMAIL_DOMAIN,
 
         MOVE_IN_LINE_PER_REFERED_FRIEND, 
         MOVE_IN_LINE_PER_SHARED_SOCIAL, 
@@ -32,7 +33,7 @@ export const buildDependencies = () => {
         token: AUTH0_TOKEN,
     })
 
-    const emailAdapter = new ResendEmailAdapter(RESEND_API_KEY)
+    const emailAdapter = new ResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN)
 
     const waitlist = new WaitlistAdapter(tuemilio, mongodb, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL)
     const accessService = new AccessService(waitlist, auth0, emailAdapter)
