@@ -27,7 +27,7 @@ export const buildDependencies = () => {
         TEST_EMAIL,
     } = getConfig()
 
-    console.log('Building dependencies for', ENVIRONMENT)
+    console.log('Building dependencies for', ENVIRONMENT, 'in', process.cwd())
 
     const tuemilio = ENVIRONMENT === Environment.Production 
         ? new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
