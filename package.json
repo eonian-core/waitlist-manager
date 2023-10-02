@@ -10,6 +10,7 @@
     "deploy": "fly deploy",
     "run:worker": "node build/worker.js",
     "test": "jest",
+    "test:only": "jest --testPathPattern",
     "test:e2e": "jest --testMatch='**/*.e2e-spec.ts'",
     "test:e2e:only": "yarn test:e2e --testPathPattern"
   },
