@@ -1,5 +1,6 @@
 import { WaitlistDatabase } from "./WaitlistAdapter";
 import { WaitlistEntry } from "./WaitlistEntry"
+import { Environment } from "./config";
 
 export interface ApplicationAccessDatabase {
     add(email: string): Promise<void>
@@ -13,7 +14,7 @@ export class AccessService {
     constructor(
         private waitlist: WaitlistDatabase,
         private accesses: ApplicationAccessDatabase,
-        private emails: EmailService
+        private emails: EmailService,
     ) {}
 
     public async giveAccess(entry: WaitlistEntry) {

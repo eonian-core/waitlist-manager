@@ -1,11 +1,11 @@
 import { AccessService } from "./AccessService"
 import { WaitlistAdapter } from "./WaitlistAdapter"
 import { WaitlistManager } from "./WaitlistManager"
-import { getConfig } from "./config";
-import { TuemilioListClientAdapter } from "./providers/TuemilioListClientAdapter";
+import { Environment, getConfig } from "./config";
+import { DevTuemilioListClientAdapter, TuemilioListClientAdapter } from "./providers/TuemilioListClientAdapter";
 import { MongoDbAdapter } from "./providers/MongoDbAdapter";
 import { Auth0Adapter } from "./providers/Auth0Adapter";
-import { ResendEmailAdapter } from "./providers/ResendEmailAdapter";
+import { DevResendEmailAdapter, ResendEmailAdapter } from "./providers/ResendEmailAdapter";
 
 export const buildDependencies = () => {
     const {
@@ -22,10 +22,14 @@ export const buildDependencies = () => {
 
         MOVE_IN_LINE_PER_REFERED_FRIEND, 
         MOVE_IN_LINE_PER_SHARED_SOCIAL, 
-        ACCESS_WAVE_COUNT
+        ACCESS_WAVE_COUNT,
+        ENVIRONMENT,
+        TEST_EMAIL,
     } = getConfig()
 
-    const tuemilio = new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
+    const tuemilio = ENVIRONMENT === Environment.Production 
+        ? new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
+        : new DevTuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
     const mongodb = new MongoDbAdapter(MONGODB_URI)
 
     const auth0 = new Auth0Adapter({
@@ -33,7 +37,9 @@ export const buildDependencies = () => {
         token: AUTH0_TOKEN,
     })
 
-    const emailAdapter = new ResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN)
+    const emailAdapter = ENVIRONMENT === Environment.Production 
+        ? new ResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN) 
+        : new DevResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN, TEST_EMAIL)
 
     const waitlist = new WaitlistAdapter(tuemilio, mongodb, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL)
     const accessService = new AccessService(waitlist, auth0, emailAdapter)

@@ -28,6 +28,7 @@ export class TuemilioListClientAdapter implements TuemilioListClient {
      * https://docs.tuemilio.com/api/#update-an-email
      */
     async update(emailId: string, data: TuemilioEmail): Promise<TuemilioEmail> {
+        console.log('TuemilioListClientAdapter.update', emailId, 'will update it with', data);
         const response = await fetch(`${this.apiUrl}/${emailId}?api_token=${this.apiToken}`, {
             method: 'PUT',
             headers: {
@@ -43,6 +44,7 @@ export class TuemilioListClientAdapter implements TuemilioListClient {
      * https://docs.tuemilio.com/api/#delete-an-email 
      */
     async delete(emailId: string): Promise<void> {
+        console.log('TuemilioListClientAdapter.delete: will delete', emailId);
         const response = await fetch(`${this.apiUrl}/${emailId}?api_token=${this.apiToken}`, {
             method: 'DELETE',
             headers: {
@@ -52,5 +54,18 @@ export class TuemilioListClientAdapter implements TuemilioListClient {
         if (response.status !== 200) {
             throw new Error("Failed to delete email");
         }
+    }
+}
+
+/** Adapter for development environment */
+export class DevTuemilioListClientAdapter extends TuemilioListClientAdapter {
+
+    async update(emailId: string, data: TuemilioEmail): Promise<TuemilioEmail> {
+        console.log('DevTuemilioListClientAdapter.update', emailId, 'will not update it with', data);
+        return data;
+    }
+
+    async delete(emailId: string): Promise<void> {
+        console.log('DevTuemilioListClientAdapter.delete', emailId, 'will not delete it');
     }
 }

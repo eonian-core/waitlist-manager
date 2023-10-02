@@ -29,6 +29,8 @@ export class MongoDbAdapter implements PersistentDatabase {
     }
 
     async add(entry: WaitlistEntry): Promise<any> {
+        console.log('MongoDbAdapter.add', entry)
+        
         const waitlistEntry = new WaitlistEntryModel({
             ...entry,
             givenAccessAt: new Date()

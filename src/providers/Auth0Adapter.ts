@@ -17,6 +17,7 @@ export class Auth0Adapter implements ApplicationAccessDatabase {
 
     /** Creates new user in Auth0 database */
     async add(email: string, password?: string): Promise<any> {
+        console.log('Auth0Adapter.add', email);
         try {
             // Implement logic using the auth0 client
             return await this.client.users.create({
