@@ -31,3 +31,15 @@ export class Auth0Adapter implements ApplicationAccessDatabase {
         }
     }
 }
+
+/** Adapter for development environment */
+export class DevAuth0Adapter extends Auth0Adapter {
+
+    /** Creates new user in Auth0 database */
+    async add(email: string, password?: string): Promise<any> {
+        const testEmail = `a${Math.floor(Math.random() * 10000)}@test.com`;
+        console.log('DevAuth0Adapter.add', email, 'will change to ', testEmail);
+        
+        return super.add(testEmail, password);
+    }
+}

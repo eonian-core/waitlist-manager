@@ -1,2 +1,2 @@
 SHELL=/bin/sh
-* * * * * ./run.sh 
+*/10 * * * * ./run.sh 

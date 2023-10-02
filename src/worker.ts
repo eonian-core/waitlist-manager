@@ -4,7 +4,7 @@ import { WaitlistManager } from "./WaitlistManager"
 import { Environment, getConfig } from "./config";
 import { DevTuemilioListClientAdapter, TuemilioListClientAdapter } from "./providers/TuemilioListClientAdapter";
 import { MongoDbAdapter } from "./providers/MongoDbAdapter";
-import { Auth0Adapter } from "./providers/Auth0Adapter";
+import { Auth0Adapter, DevAuth0Adapter } from "./providers/Auth0Adapter";
 import { DevResendEmailAdapter, ResendEmailAdapter } from "./providers/ResendEmailAdapter";
 
 export const buildDependencies = () => {
@@ -27,15 +27,22 @@ export const buildDependencies = () => {
         TEST_EMAIL,
     } = getConfig()
 
+    console.log('Building dependencies for', ENVIRONMENT)
+
     const tuemilio = ENVIRONMENT === Environment.Production 
         ? new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
         : new DevTuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
     const mongodb = new MongoDbAdapter(MONGODB_URI)
 
-    const auth0 = new Auth0Adapter({
-        domain: AUTH0_DOMAIN,
-        token: AUTH0_TOKEN,
-    })
+    const auth0 = ENVIRONMENT === Environment.Production 
+        ? new Auth0Adapter({
+            domain: AUTH0_DOMAIN,
+            token: AUTH0_TOKEN,
+        })
+        : new DevAuth0Adapter({
+            domain: AUTH0_DOMAIN,
+            token: AUTH0_TOKEN,
+        })
 
     const emailAdapter = ENVIRONMENT === Environment.Production 
         ? new ResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN) 
