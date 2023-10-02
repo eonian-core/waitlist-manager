@@ -9,12 +9,14 @@ describe('Auth0Adapter', () => {
     beforeEach(() => {
         const {
             AUTH0_DOMAIN,
-            AUTH0_TOKEN
+            AUTH0_CLIENT_ID,
+            AUTH0_SECRET
         } = getConfig();
 
         auth0Adapter = new Auth0Adapter({
             domain: AUTH0_DOMAIN,
-            token: AUTH0_TOKEN
+            clientId: AUTH0_CLIENT_ID,
+            clientSecret: AUTH0_SECRET,
         });
     })
 

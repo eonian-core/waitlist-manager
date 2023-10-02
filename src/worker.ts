@@ -15,7 +15,8 @@ export const buildDependencies = () => {
         MONGODB_URI, 
 
         AUTH0_DOMAIN,
-        AUTH0_TOKEN,
+        AUTH0_CLIENT_ID,
+        AUTH0_SECRET,
 
         RESEND_API_KEY,
         ACCESS_EMAIL_DOMAIN,
@@ -37,11 +38,13 @@ export const buildDependencies = () => {
     const auth0 = ENVIRONMENT === Environment.Production 
         ? new Auth0Adapter({
             domain: AUTH0_DOMAIN,
-            token: AUTH0_TOKEN,
+            clientId: AUTH0_CLIENT_ID,
+            clientSecret: AUTH0_SECRET,
         })
         : new DevAuth0Adapter({
             domain: AUTH0_DOMAIN,
-            token: AUTH0_TOKEN,
+            clientId: AUTH0_CLIENT_ID,
+            clientSecret: AUTH0_SECRET,
         })
 
     const emailAdapter = ENVIRONMENT === Environment.Production 

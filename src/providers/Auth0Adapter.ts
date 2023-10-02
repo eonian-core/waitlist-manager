@@ -1,4 +1,4 @@
-import { ManagementClient, ManagementClientOptionsWithToken } from 'auth0';
+import { ManagementClient, ManagementClientOptionsWithClientSecret } from 'auth0';
 import fetch from 'node-fetch';
 import { ApplicationAccessDatabase } from "../AccessService";
 
@@ -7,7 +7,7 @@ import { ApplicationAccessDatabase } from "../AccessService";
 export class Auth0Adapter implements ApplicationAccessDatabase {
     private client: ManagementClient;
 
-    constructor(private options: ManagementClientOptionsWithToken) {
+    constructor(private options: ManagementClientOptionsWithClientSecret) {
         // Initialize the auth0 client
         this.client = new ManagementClient({
             ...this.options,
@@ -20,11 +20,12 @@ export class Auth0Adapter implements ApplicationAccessDatabase {
         console.log('Auth0Adapter.add', email);
         try {
             // Implement logic using the auth0 client
-            return await this.client.users.create({
+            const result = await this.client.users.create({
                 email,
                 password: password || `ps-${Math.floor(Math.random() * 10000)}`,
                 connection: 'Username-Password-Authentication'
             });
+            return result.data;
         } catch (error) {
             console.log('Auth0Adapter.add', error);
             throw error;
@@ -39,7 +40,7 @@ export class DevAuth0Adapter extends Auth0Adapter {
     async add(email: string, password?: string): Promise<any> {
         const testEmail = `a${Math.floor(Math.random() * 10000)}@test.com`;
         console.log('DevAuth0Adapter.add', email, 'will change to ', testEmail);
-        
+
         return super.add(testEmail, password);
     }
 }
