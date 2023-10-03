@@ -7,7 +7,7 @@ import { MongoDbAdapter } from "./providers/MongoDbAdapter";
 import { Auth0Adapter, DevAuth0Adapter } from "./providers/Auth0Adapter";
 import { DevResendEmailAdapter, ResendEmailAdapter } from "./providers/ResendEmailAdapter";
 
-export const buildDependencies = () => {
+export const buildDependencies = async () => {
     const {
         TUEMILIO_LIST_ID, 
         TUEMILIO_API_TOKEN, 
@@ -34,6 +34,7 @@ export const buildDependencies = () => {
         ? new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
         : new DevTuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
     const mongodb = new MongoDbAdapter(MONGODB_URI)
+    await mongodb.connect()
 
     const auth0 = ENVIRONMENT === Environment.Production 
         ? new Auth0Adapter({
@@ -65,7 +66,7 @@ export const buildDependencies = () => {
 }
 
 export const work = async () => {
-    const { manager } = buildDependencies()
+    const { manager } = await buildDependencies()
 
     await manager.giveAccessToTop()
 }
