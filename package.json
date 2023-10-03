@@ -7,7 +7,7 @@
     "build:watch": "tsc -w",
     "start": "node build/server.js",
     "start:watch": "nodemon build/server.js",
-    "deploy": "yarn build && fly deploy",
+    "deploy": "rm -rf build && fly deploy",
     "stop:worker": "fly scale count 0 -a waitlist-manager",
     "run:worker": "node build/worker.js",
     "test": "jest",

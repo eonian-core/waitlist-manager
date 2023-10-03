@@ -53,4 +53,4 @@ COPY --from=build /app /app
 COPY crontab crontab
 COPY run.sh run.sh
 
-CMD supercronic ./crontab
+CMD supercronic -passthrough-logs ./crontab
