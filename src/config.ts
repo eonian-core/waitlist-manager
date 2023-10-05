@@ -10,8 +10,6 @@ export const getConfig = () => {
         TUEMILIO_LIST_ID: process.env.TUEMILIO_LIST_ID!,
         TUEMILIO_API_TOKEN: process.env.TUEMILIO_API_TOKEN!,
         
-        MONGODB_URI: process.env.MONGODB_URI!,
-        
         AUTH0_DOMAIN: process.env.AUTH0_DOMAIN!,
         AUTH0_CLIENT_ID: process.env.AUTH0_CLIENT_ID!,
         AUTH0_SECRET: process.env.AUTH0_SECRET!,

@@ -3,7 +3,6 @@ import { WaitlistAdapter } from "./WaitlistAdapter"
 import { WaitlistManager } from "./WaitlistManager"
 import { Environment, getConfig } from "./config";
 import { DevTuemilioListClientAdapter, TuemilioListClientAdapter } from "./providers/TuemilioListClientAdapter";
-import { MongoDbAdapter } from "./providers/MongoDbAdapter";
 import { Auth0Adapter, DevAuth0Adapter } from "./providers/Auth0Adapter";
 import { DevResendEmailAdapter, ResendEmailAdapter } from "./providers/ResendEmailAdapter";
 
@@ -11,8 +10,6 @@ export const buildDependencies = async () => {
     const {
         TUEMILIO_LIST_ID, 
         TUEMILIO_API_TOKEN, 
-        
-        MONGODB_URI, 
 
         AUTH0_DOMAIN,
         AUTH0_CLIENT_ID,
@@ -33,8 +30,6 @@ export const buildDependencies = async () => {
     const tuemilio = ENVIRONMENT === Environment.Production 
         ? new TuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
         : new DevTuemilioListClientAdapter(TUEMILIO_LIST_ID, TUEMILIO_API_TOKEN)
-    const mongodb = new MongoDbAdapter(MONGODB_URI)
-    await mongodb.connect()
 
     const auth0 = ENVIRONMENT === Environment.Production 
         ? new Auth0Adapter({
@@ -58,7 +53,6 @@ export const buildDependencies = async () => {
 
     return {
         tuemilio,
-        mongodb,
         waitlist,
         accessService,
         manager
