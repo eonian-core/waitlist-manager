@@ -2,8 +2,6 @@ import { ManagementClient, ManagementClientOptionsWithClientSecret } from 'auth0
 import fetch from 'node-fetch';
 import { ApplicationAccessDatabase } from "../AccessService";
 
-
-
 export class Auth0Adapter implements ApplicationAccessDatabase {
     private client: ManagementClient;
 
@@ -22,7 +20,7 @@ export class Auth0Adapter implements ApplicationAccessDatabase {
             // Implement logic using the auth0 client
             const result = await this.client.users.create({
                 email,
-                password: password || `ps-${Math.floor(Math.random() * 10000)}`,
+                password: password || `ps-placeholder!${Math.floor(Math.random() * 10000)}`,
                 connection: 'Username-Password-Authentication'
             });
             return result.data;
