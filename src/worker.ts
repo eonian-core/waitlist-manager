@@ -52,7 +52,7 @@ export const buildDependencies = async () => {
         ? new ResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN) 
         : new DevResendEmailAdapter(RESEND_API_KEY, ACCESS_EMAIL_DOMAIN, TEST_EMAIL)
 
-    const waitlist = new WaitlistAdapter(tuemilio, mongodb, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL)
+    const waitlist = new WaitlistAdapter(tuemilio, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL)
     const accessService = new AccessService(waitlist, auth0, emailAdapter)
     const manager = new WaitlistManager(waitlist, accessService, MOVE_IN_LINE_PER_REFERED_FRIEND, MOVE_IN_LINE_PER_SHARED_SOCIAL, ACCESS_WAVE_COUNT)
 

@@ -1,6 +1,9 @@
 import { Document, Model, Schema, model, connect, disconnect } from "mongoose";
-import { PersistentDatabase } from "../WaitlistAdapter";
 import { WaitlistEntry } from "../WaitlistEntry";
+
+export interface PersistentDatabase {
+    add(entry: WaitlistEntry): Promise<any>
+}
 
 interface WaitlistEntryModel extends WaitlistEntry, Document<string> {
     id: string;

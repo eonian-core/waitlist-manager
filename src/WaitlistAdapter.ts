@@ -12,6 +12,9 @@ export interface TuemilioEmail {
     /** Date in string format, aka 2023-07-27T12:45:29.000000Z */
     created_at: string;
 
+    /** If exists and not null then access is granted */
+    access_granted_at?: string | null;
+
     points: number;
     position: number;
     people_ahead: number;
@@ -35,16 +38,14 @@ export interface TuemilioListClient {
 
     /** Delete an email from an specific wait list. */
     delete(emailId: string): Promise<void>
-}
 
-export interface PersistentDatabase {
-    add(entry: WaitlistEntry): Promise<any>
+    /** Mark email as granted access and not count in queue */
+    grantAccess(emailId: string): Promise<TuemilioEmail>;
 }
 
 export class WaitlistAdapter implements WaitlistDatabase {
     constructor(
         private tuemelio: TuemilioListClient,
-        private db: PersistentDatabase,
         /** Used to calculate referals amount */
         private pointsPerReferedFriend: number,
         /** Used to calculate shares amount */
@@ -52,17 +53,14 @@ export class WaitlistAdapter implements WaitlistDatabase {
     ) { }
 
     public async markAsGivenAccess(entry: WaitlistEntry): Promise<void> {
-        // There currently no way to mark an email as given access in Tuemilio through the API
-        // So we will save the record in database and delete it from Tuemilio
-        await this.db.add(entry);
-        // important to delete it only after saving in database
-        await this.tuemelio.delete(entry.id);
+        await this.tuemelio.grantAccess(entry.id);
     }
 
     /** Returns top of the list sorted from oldest to newest */
     public async getLatest(): Promise<WaitlistEntry[]> {
         const records = await this.tuemelio.getAll();
         return records
+            .filter(record => !record.access_granted_at) // filter out already granted access
             .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
             .map(record => {
                 // We cannot get exact amount of referals, so will calculate it from points

@@ -1,4 +1,4 @@
-import { WaitlistAdapter, TuemilioEmail, TuemilioListClient, PersistentDatabase } from "../WaitlistAdapter";
+import { WaitlistAdapter, TuemilioEmail, TuemilioListClient } from "../WaitlistAdapter";
 import { WaitlistEntry } from "../WaitlistEntry";
 
 
@@ -7,8 +7,6 @@ describe("WaitlistAdapter", () => {
     // Mock implementation for TuemilioListClient
     let tuemilioMock: TuemilioListClient;
 
-    // Mock implementation for AirtableClient
-    let database: PersistentDatabase;
     let waitlistAdapter: WaitlistAdapter;
 
     beforeEach(() => {
@@ -16,11 +14,9 @@ describe("WaitlistAdapter", () => {
             getAll: jest.fn(),
             update: jest.fn(),
             delete: jest.fn(),
+            grantAccess: jest.fn(),
         }
-        database = {
-            add: jest.fn(),
-        }
-        waitlistAdapter = new WaitlistAdapter(tuemilioMock, database, 5, 3);
+        waitlistAdapter = new WaitlistAdapter(tuemilioMock, 5, 3);
     });
 
     describe("markAsGivenAccess", () => {
@@ -29,8 +25,7 @@ describe("WaitlistAdapter", () => {
 
             await waitlistAdapter.markAsGivenAccess(entry);
 
-            expect(database.add).toHaveBeenCalledWith(entry);
-            expect(tuemilioMock.delete).toHaveBeenCalledWith(entry.id);
+            expect(tuemilioMock.grantAccess).toHaveBeenCalledWith(entry.id);
         });
     });
 
@@ -61,7 +56,18 @@ describe("WaitlistAdapter", () => {
                     created_at: "2023-07-26T10:30:15.000000Z",
                     points: 20,
                     position: 3,
+                    access_granted_at: null,
                     people_ahead: 2,
+                    shared_on: { },
+                },
+                {
+                    id: 4,
+                    address: "jane3@example.com",
+                    created_at: "2023-07-26T10:30:15.000000Z",
+                    points: 20,
+                    position: 3,
+                    people_ahead: 2,
+                    access_granted_at: "2023-07-26T10:30:15.000000Z",
                     shared_on: { },
                 },
             ];
@@ -70,7 +76,7 @@ describe("WaitlistAdapter", () => {
 
             const result = await waitlistAdapter.getLatest();
 
-            expect(result).toHaveLength(records.length);
+            expect(result).toHaveLength(3);
             expect(result[0]).toHaveProperty("email", 'jane2@example.com');
             expect(result[0]).toHaveProperty("referedCount", 4);
             expect(result[0]).toHaveProperty("sharedSocialsCount", 0);

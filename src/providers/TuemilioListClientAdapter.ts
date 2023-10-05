@@ -55,6 +55,24 @@ export class TuemilioListClientAdapter implements TuemilioListClient {
             throw new Error("Failed to delete email");
         }
     }
+
+    /**
+     * PUT https://tuemilio.com/api/v1/lists/{LIST_ID}/emails/{EMAIL_ID}/grant-access?api_token=XXXX
+     * @param emailId 
+     */
+    async grantAccess(emailId: string): Promise<TuemilioEmail> {
+        console.log('TuemilioListClientAdapter.grantAccess: will grant access to', emailId);
+        const response = await fetch(`${this.apiUrl}/${emailId}/grant-access?api_token=${this.apiToken}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (response.status !== 200) {
+            throw new Error("Failed to grant access");
+        }
+        return await response.json() as TuemilioEmail;
+    }
 }
 
 /** Adapter for development environment */
