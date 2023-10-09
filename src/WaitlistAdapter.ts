@@ -59,8 +59,12 @@ export class WaitlistAdapter implements WaitlistDatabase {
     /** Returns top of the list sorted from oldest to newest */
     public async getLatest(): Promise<WaitlistEntry[]> {
         const records = await this.tuemelio.getAll();
-        return records
-            .filter(record => !record.access_granted_at) // filter out already granted access
+        // filter out already granted access
+        const withoutAccess = records.filter(record => !record.access_granted_at);
+
+        console.log('WaitlistAdapter.getLatest:', {total: records.length, 'without access': withoutAccess.length, 'with access': records.length - withoutAccess.length});
+
+        return withoutAccess
             .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime())
             .map(record => {
                 // We cannot get exact amount of referals, so will calculate it from points
