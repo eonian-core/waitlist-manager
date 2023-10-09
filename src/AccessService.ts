@@ -3,7 +3,7 @@ import { WaitlistEntry } from "./WaitlistEntry"
 import { Environment } from "./config";
 
 export interface ApplicationAccessDatabase {
-    add(email: string): Promise<void>
+    add(email: string): Promise<any>
 }
 
 export interface EmailService {

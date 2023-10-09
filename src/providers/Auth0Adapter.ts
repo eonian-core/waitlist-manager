@@ -2,6 +2,11 @@ import { ManagementClient, ManagementClientOptionsWithClientSecret } from 'auth0
 import fetch from 'node-fetch';
 import { ApplicationAccessDatabase } from "../AccessService";
 
+export enum AddOutcome {
+    Created = "Created",
+    Exists = "Exists",
+}
+
 export class Auth0Adapter implements ApplicationAccessDatabase {
     private client: ManagementClient;
 
@@ -14,7 +19,7 @@ export class Auth0Adapter implements ApplicationAccessDatabase {
     }
 
     /** Creates new user in Auth0 database */
-    async add(email: string, password?: string): Promise<any> {
+    async add(email: string, password?: string): Promise<{outcome: AddOutcome, data?: any}> {
         console.log('Auth0Adapter.add', email);
         
         try {
@@ -24,11 +29,15 @@ export class Auth0Adapter implements ApplicationAccessDatabase {
                 password: password || `ps-placeholder!${Math.floor(Math.random() * 10000)}`,
                 connection: 'Username-Password-Authentication'
             });
-            return result.data;
+            return {outcome: AddOutcome.Created, data: result.data };
         } catch (error) {
             console.error('Auth0Adapter.add', error);
-            // TODO: add handling error for existing users
-            // errorCode: 'auth0_idp_error', error: 'Conflict',statusCode: 409, body: '{"statusCode":409,"error":"Conflict","message":"The user already exists.","errorCode":"auth0_idp_error"}',
+            // Handle error for existing users
+            if (error.statusCode === 409 && error.errorCode === 'auth0_idp_error') {
+                console.log('User already exists, will ignore it and continue', email);
+                return { outcome: AddOutcome.Exists }
+            }
+
             throw error;
         }
     }

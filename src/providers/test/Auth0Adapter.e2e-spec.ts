@@ -1,5 +1,5 @@
 import { getConfig } from "../../config";
-import { Auth0Adapter } from "../Auth0Adapter";
+import { AddOutcome, Auth0Adapter } from "../Auth0Adapter";
 
 
 describe('Auth0Adapter', () => {
@@ -30,7 +30,18 @@ describe('Auth0Adapter', () => {
         console.log('result', result)
 
         // Assert
-        expect(result).toBeDefined();
-        expect(result.email).toEqual(email);
+        expect(result.outcome).toBe(AddOutcome.Created);
+        expect(result.data.email).toEqual(email);
+    })
+
+    it('should throw error for existing user', async () => {
+        // Arrange
+        const email = `a3616@test.com`;
+
+        // Act
+        const result = await auth0Adapter.add(email, "test123");
+
+        // Assert
+        expect(result.outcome).toBe(AddOutcome.Exists);
     })
 })
