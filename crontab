@@ -1,2 +1,2 @@
 SHELL=/bin/sh
-0 0 * * * ./run.sh
+0 12 * * * ./run.sh
